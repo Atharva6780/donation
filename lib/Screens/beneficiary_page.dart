@@ -1,7 +1,54 @@
 import 'package:flutter/material.dart';
 
-class BeneficiaryPage extends StatelessWidget {
+class BeneficiaryPage extends StatefulWidget {
   const BeneficiaryPage({Key? key}) : super(key: key);
+
+  @override
+  State<BeneficiaryPage> createState() => _BeneficiaryPageState();
+}
+
+class _BeneficiaryPageState extends State<BeneficiaryPage> {
+  List<String> beneficiaries = [
+    'Rahul Sharma',
+    'Priya Verma',
+    'Amit Singh',
+    'Neha Patel'
+  ];
+
+  void _addBeneficiary(String name) {
+    setState(() {
+      beneficiaries.add(name);
+    });
+  }
+
+  void _showAddDialog() {
+    String newName = '';
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text("Add New Beneficiary"),
+        content: TextField(
+          onChanged: (value) => newName = value,
+          decoration: const InputDecoration(hintText: "Enter beneficiary name"),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text("Cancel"),
+          ),
+          ElevatedButton(
+            onPressed: () {
+              if (newName.trim().isNotEmpty) {
+                _addBeneficiary(newName.trim());
+              }
+              Navigator.pop(context);
+            },
+            child: const Text("Add"),
+          )
+        ],
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -10,27 +57,17 @@ class BeneficiaryPage extends StatelessWidget {
         title: const Text("Beneficiaries"),
         backgroundColor: Colors.red,
       ),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            const Icon(Icons.people, size: 100, color: Colors.red),
-            const SizedBox(height: 20),
-            const Text(
-              "List of Beneficiaries",
-              style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: Colors.black),
-            ),
-            const SizedBox(height: 10),
-            const Padding(
-              padding: EdgeInsets.symmetric(horizontal: 20),
-              child: Text(
-                "Here you can view and manage blood recipients who need urgent donations.",
-                textAlign: TextAlign.center,
-                style: TextStyle(fontSize: 16, color: Colors.grey),
-              ),
-            ),
-          ],
+      body: ListView.builder(
+        itemCount: beneficiaries.length,
+        itemBuilder: (context, index) => ListTile(
+          leading: const Icon(Icons.person, color: Colors.red),
+          title: Text(beneficiaries[index]),
         ),
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: _showAddDialog,
+        backgroundColor: Colors.red,
+        child: const Icon(Icons.add),
       ),
     );
   }
